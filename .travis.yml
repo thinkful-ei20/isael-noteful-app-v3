@@ -2,10 +2,10 @@ language: node_js
 node_js: node
 services:
   -mongodb
-# deploy:
-#     provider: heroku
-#     api_key:
-#       secure: [YOUR-API-KEY]
-#     app: [YOUR-APP-NAME]
-#     on:
-#       repo: [YOUR-APP-REPO]
+deploy:
+    provider: heroku
+    api_key: e48b81ac-043a-41c8-903d-3c49b4252435
+    app: isael-noteful-app-v3
+
+    on:
+      repo: thinkful-ei20/isael-noteful-app-v3
