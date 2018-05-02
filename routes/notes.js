@@ -3,7 +3,7 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-mongoose.Promise = global.Promise;
+//mongoose.Promise = global.Promise;
 
 const {Note} = require('../models/note');
 /* ========== GET/READ ALL ITEM ========== */
@@ -39,23 +39,25 @@ router.get('/', (req, res, next) => {
 
 /* ========== GET/READ A SINGLE ITEM ========== */
 router.get('/:id', (req, res, next) => {
-  const id = req.params.id;
+  const { id } = req.params;
 
-  Note.find({_id: id})
-    .then(results => {
-      if(!results.length){
-        const err = new Error('Id does not exist');
-        err.status = 404;
-        return next(err);
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    const err = new Error('The `id` is not valid');
+    err.status = 400;
+    return next(err);
+  }
+
+  Note.findById(id)
+    .then(result => {
+      if (result) {
+        res.json(result);
+      } else {
+        next();
       }
-      res.json({results});
-    })   
-    .catch(() => {
-      const err = new Error('Invalid Id');
-      err.status = 400;
-      return next(err);
+    })
+    .catch(err => {
+      next(err);
     });
-
 });
 
 /* ========== POST/CREATE AN ITEM ========== */
@@ -75,7 +77,7 @@ router.post('/', (req, res, next) => {
 
   Note.create(obj)
     .then(results => {
-      res.location('path/to/new/document').status(201).json(results);
+      res.location(`${req.originalUrl}/${results.id}`).status(201).json(results);
     })
     .catch((err) => next(err));
 
