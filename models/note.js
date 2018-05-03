@@ -9,7 +9,9 @@ const noteSchema = new Schema({
     required: true 
   }, 
   content: { 
-    type: String } 
+    type: String 
+  },
+  folderId: {type: mongoose.Schema.Types.ObjectId, ref: 'Folder'} 
 }, { timestamps: true });
 
 noteSchema.set('toObject', {

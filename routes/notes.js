@@ -8,7 +8,8 @@ const mongoose = require('mongoose');
 const {Note} = require('../models/note');
 /* ========== GET/READ ALL ITEM ========== */
 router.get('/', (req, res, next) => {
-  const searchTerm = req.query.searchTerm;
+  const {searchTerm, folderId} = req.query;
+
   let filter = {};
   let findCond;
   if (searchTerm) {
@@ -22,6 +23,9 @@ router.get('/', (req, res, next) => {
     findCond = {};
   }
 
+  if(folderId){
+    filter.folderId = folderId;
+  }
   
 
   Note.find(findCond)//!findCond ? {} : findCond
@@ -62,13 +66,13 @@ router.get('/:id', (req, res, next) => {
 
 /* ========== POST/CREATE AN ITEM ========== */
 router.post('/', (req, res, next) => {
-  const obj = {};
-  const fields = ['title', 'content'];
+  const {folderId, title, content} = req.body;
+  const obj = {title, content};
 
-  fields.forEach(field => {
-    if(req.body[field]) obj[field] = req.body[field];
-  });
-  
+  if(mongoose.Types.ObjectId.isValid(folderId)){
+    obj.folderId = folderId;
+  }
+
   if(!obj.title){
     const err = new Error('You need a title');
     err.status = 400;
@@ -85,13 +89,15 @@ router.post('/', (req, res, next) => {
 
 /* ========== PUT/UPDATE A SINGLE ITEM ========== */
 router.put('/:id', (req, res, next) => {
-  const id = req.params.id;
-  const obj = {};
-  const fields = ['title', 'content'];
+  const { id } = req.params;
+  const {title, content, folderId} = req.body;
+  const obj = {title};
 
-  fields.forEach(field => {
-    if(req.body[field]) obj[field] = req.body[field];
-  });
+  if(content) obj.content = content;
+
+  if(mongoose.Types.ObjectId.isValid(folderId)){
+    obj.folderId = folderId;
+  }
   
   if(!obj.title){
     const err = new Error('You need a title');
@@ -116,7 +122,7 @@ router.delete('/:id', (req, res, next) => {
   const id = req.params.id;
 
   Note.findByIdAndRemove(id)
-    .then((result, err) => {
+    .then(() => {
       res.status(204).end();
     })
     .catch(() => {

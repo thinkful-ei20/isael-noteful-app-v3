@@ -7,30 +7,36 @@ const chaiHttp = require('chai-http');
 const app = require('../server');
 
 const { TEST_MONGODB_URI } = require('../config');
-const { Note  } = require('../models/note');
-
+const { Note } = require('../models/note');
+const { Folder } = require('../models/folder');
+const seedFolders = require('../db/seed/folders');
 const seedNotes = require('../db/seed/notes');
 const expect = chai.expect;
 chai.use(chaiHttp);
 
-before(function (){
-  return mongoose.connect(TEST_MONGODB_URI);
-});
 
-beforeEach(function (){
-  return Note.insertMany(seedNotes)
-    .then(() => Note.createIndexes());
-});
-
-afterEach(function (){
-  return mongoose.connection.db.dropDatabase();
-});
-
-after(function(){
-  return mongoose.disconnect();
-});
 
 describe('note api', function(){
+  before(function (){
+    return mongoose.connect(TEST_MONGODB_URI);
+  });
+  
+  beforeEach(function (){
+    return Promise.all([
+      Note.insertMany(seedNotes),
+      Folder.insertMany(seedFolders)
+    ])
+      .then(() => Note.createIndexes());
+  });
+  
+  afterEach(function (){
+    return mongoose.connection.db.dropDatabase();
+  });
+  
+  after(function(){
+    return mongoose.disconnect();
+  });
+
   describe('GET /api/notes/:id', function () {
     it('should return correct note', function () {
       let data;
@@ -47,7 +53,7 @@ describe('note api', function(){
           expect(res).to.be.json;
   
           expect(res.body).to.be.an('object');
-          expect(res.body).to.have.keys('id', 'title', 'content', 'createdAt', 'updatedAt');
+          expect(res.body).to.have.keys('id', 'title', 'content', 'createdAt', 'updatedAt', 'folderId');
   
           // 3) then compare database results to API response
           expect(res.body.id).to.equal(data.id);
