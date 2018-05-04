@@ -53,7 +53,7 @@ describe('note api', function(){
           expect(res).to.be.json;
   
           expect(res.body).to.be.an('object');
-          expect(res.body).to.have.keys('id', 'title', 'content', 'createdAt', 'updatedAt', 'folderId');
+          expect(res.body).to.have.keys('id', 'title', 'content', 'createdAt', 'updatedAt', 'folderId', 'tags');
   
           // 3) then compare database results to API response
           expect(res.body.id).to.equal(data.id);
@@ -107,7 +107,7 @@ describe('note api', function(){
           expect(res).to.have.header('location');
           expect(res).to.be.json;
           expect(res.body).to.be.a('object');
-          expect(res.body).to.have.keys('id', 'title', 'content', 'createdAt', 'updatedAt');
+          expect(res.body).to.have.keys('id', 'title', 'content', 'createdAt', 'updatedAt', 'tags');
           // 2) then call the database
           return Note.findById(res.body.id);
         })
@@ -169,7 +169,7 @@ describe('note api', function(){
           expect(res.body).to.have.length(data.length);
           res.body.forEach(note => {
             expect(note).to.be.a('object');
-            expect(note).to.have.keys('title', 'createdAt', 'updatedAt', 'id', 'folderId', 'content');
+            expect(note).to.have.keys('title', 'createdAt', 'updatedAt', 'id', 'folderId', 'content', 'tags');
           });
         });
     });
@@ -278,7 +278,7 @@ describe('note api', function(){
           expect(res).to.have.status(400);
           expect(res).to.be.json;
           expect(res.body).to.be.a('object');
-          expect(res.body.message).to.equal('The id is not valid');
+          expect(res.body.message).to.equal('Invalid Id');
           // 2) then call the database
         });
     });

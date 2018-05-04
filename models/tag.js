@@ -3,7 +3,7 @@
 const mongoose = require('mongoose');
 
 const tagSchema = mongoose.Schema({
-  name: {type: String, unique: true}
+  name: {type: String, unique: true, required: true}
 },{timestamps: true});
 
 const Tag = mongoose.model('Tag', tagSchema);
