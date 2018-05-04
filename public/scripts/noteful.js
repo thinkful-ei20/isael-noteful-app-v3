@@ -54,7 +54,7 @@ const noteful = (function () {
       </li>`;
 
     const listItems = list.map(item => `
-      <li data-id="${item._id}" class="js-folder-item ${currQuery.folderId === item.id ? 'active' : ''}">
+      <li data-id="${item._id}" class="js-folder-item ${currQuery.folderId === item._id ? 'active' : ''}">
         <a href="#" class="name js-folder-link">${item.name}</a>
         <button class="removeBtn js-folder-delete">X</button>
       </li>`);
@@ -63,7 +63,7 @@ const noteful = (function () {
   }
 
   function generateFolderSelect(list) {
-    const notes = list.map(item => `<option value="${item.id}">${item.name}</option>`);
+    const notes = list.map(item => `<option value="${item._id}">${item.name}</option>`);
     return '<option value="">Select Folder:</option>' + notes.join('');
   }
 
@@ -116,10 +116,12 @@ const noteful = (function () {
       event.preventDefault();
 
       const noteId = getNoteIdFromElement(event.currentTarget);
-
+      console.log(noteId);
       api.details(`/api/notes/${noteId}`)
         .then((response) => {
+          console.log(response);
           store.currentNote = response;
+          console.log(store.currentNote);
           render();
         });
     });
