@@ -7,8 +7,12 @@ const {Folder} = require('../models/folder');
 router.get('/', (req, res, next) => {
   return Folder.find().sort({name: 1})
     .then(result => {
-      if(result) res.json(result);
-      next();
+      if(result){
+        res.json(result);
+      } 
+      else{
+        next();
+      } 
     });
 });
 
@@ -22,28 +26,25 @@ router.get('/:id', (req,res, next) => {
   }
   Folder.findById(id)
     .then(results => {
-      if(results) res.json(results);
-      else next();
+      if(results){
+        res.json(results);
+      }
+      else{
+        next();
+      } 
     })
     .catch(err => next(err));
 });
 
 router.post('/', (req, res, next) => {
-  const obj = {};
+  const { name } = req.body;
+  const obj = {name};
 
-  const updateableFields = ['name'];
-  
-  if(!req.body.name){
+  if(!name){
     const err = new Error('need name');
     err.status = 400;
     return next(err);
   }
-
-  updateableFields.map(item => {
-    if(item in req.body){
-      obj[item] = req.body[item];
-    }
-  });
 
   Folder.create(obj)
     .then(results => {
@@ -63,8 +64,7 @@ router.post('/', (req, res, next) => {
 
 router.put('/:id', (req,res,next) => {
   const {id} = req.params;
-  const obj = {};
-  const updateableFields = ['name'];
+  const { name } = req.body;
 
   if(!req.body.name){
     const err = new Error ('need name');
@@ -72,21 +72,16 @@ router.put('/:id', (req,res,next) => {
     return next(err);
   }
 
-  updateableFields.map(item => {
-    if(item in req.body){
-      obj[item] = req.body[item];
-    }
-  });
-
   if(!mongoose.Types.ObjectId.isValid(id)){
     const err = new Error('the `id` is not valid');
     err.status = 400;
     return  next(err);
   }
 
+  const obj = {name};
+
   return Folder.findByIdAndUpdate(id, obj, {new: true})
     .then(results => {
-      console.log(results);
       if(results) res.json(results);
       else next();
     })

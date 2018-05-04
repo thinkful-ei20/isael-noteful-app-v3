@@ -22,7 +22,7 @@ router.get('/', (req, res, next) => {
   
 
   Note.find(filter)//!findCond ? {} : findCond
-    .sort('created')
+    .sort({'updatedAt': 'desc'})
     .then(results => {
       res.json(results);
     })
@@ -84,20 +84,25 @@ router.post('/', (req, res, next) => {
 router.put('/:id', (req, res, next) => {
   const { id } = req.params;
   const {title, content, folderId} = req.body;
-  const obj = {title};
 
-  if(content) obj.content = content;
-
-  if(mongoose.Types.ObjectId.isValid(folderId)){
-    obj.folderId = folderId;
+  if(!mongoose.Types.ObjectId.isValid(id)){
+    const err = new Error('The id is not valid');
+    err.status = 400;
+    return next(err);
   }
   
-  if(!obj.title){
+  if(!title){
     const err = new Error('You need a title');
     err.status = 400;
     return next(err);
   }
   
+  const obj = {title, content};
+  
+  if(mongoose.Types.ObjectId.isValid(folderId)){
+    obj.folderId = folderId;
+  }
+
   Note.findByIdAndUpdate(id, obj, {new: true})
     .then(results => {
       res.json(results);

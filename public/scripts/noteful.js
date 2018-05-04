@@ -54,7 +54,7 @@ const noteful = (function () {
       </li>`;
 
     const listItems = list.map(item => `
-      <li data-id="${item.id}" class="js-folder-item ${currQuery.folderId === item.id ? 'active' : ''}">
+      <li data-id="${item._id}" class="js-folder-item ${currQuery.folderId === item.id ? 'active' : ''}">
         <a href="#" class="name js-folder-link">${item.name}</a>
         <button class="removeBtn js-folder-delete">X</button>
       </li>`);
