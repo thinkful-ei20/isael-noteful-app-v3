@@ -11,16 +11,9 @@ router.get('/', (req, res, next) => {
   const {searchTerm, folderId} = req.query;
 
   let filter = {};
-  let findCond;
   if (searchTerm) {
     const re = new RegExp(searchTerm, 'i');
-    filter.title = { $regex: re };
-    filter.content = {$regex: re};
-    findCond = { $or: 
-      [{title: filter.title}, {content: filter.content}]
-    };
-  }else{
-    findCond = {};
+    filter.$or = [{'title': {$regex: re}}, {'content': {$regex: re}}];
   }
 
   if(folderId){
@@ -28,7 +21,7 @@ router.get('/', (req, res, next) => {
   }
   
 
-  Note.find(findCond)//!findCond ? {} : findCond
+  Note.find(filter)//!findCond ? {} : findCond
     .sort('created')
     .then(results => {
       res.json(results);

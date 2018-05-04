@@ -169,7 +169,7 @@ describe('note api', function(){
           expect(res.body).to.have.length(data.length);
           res.body.forEach(note => {
             expect(note).to.be.a('object');
-            expect(note).to.include.keys('title', 'createdAt', 'updatedAt', 'id');
+            expect(note).to.have.keys('title', 'createdAt', 'updatedAt', 'id', 'folderId', 'content');
           });
         });
     });
@@ -203,6 +203,26 @@ describe('note api', function(){
           expect(res).to.be.json;
           expect(res.body).to.be.a('array');
           expect(res.body.length).to.equal(data.length);
+        });
+    });
+
+    it('should return the results of the folderId query search', function(){
+      let doc;
+      let length;
+      return Note.findOne()
+        .then(res => {
+          doc = res;
+          return chai.request(app).get(`/api/notes?folderId=${doc.folderId}`);  
+        })
+        .then(res => {
+          length = res.body.length;
+          expect(res).to.have.status(200);
+          expect(res).to.be.json;
+          expect(res.body).to.be.a('array');
+          return Note.find({folderId: doc.folderId});
+        })
+        .then(res => {
+          expect(res.length).to.equal(length);
         });
     });
   });
