@@ -13,22 +13,22 @@ const noteful = (function () {
     const folderSelect = generateFolderSelect(store.folders);
     $('.js-note-folder-entry').html(folderSelect);
 
-    const tagsList = generateTagsList(store.tags, store.currentQuery);
-    $('.js-tags-list').html(tagsList);
+    // const tagsList = generateTagsList(store.tags, store.currentQuery);
+    // $('.js-tags-list').html(tagsList);
 
-    const tagsSelect = generateTagsSelect(store.tags);
-    $('.js-note-tags-entry').html(tagsSelect);
+    // const tagsSelect = generateTagsSelect(store.tags);
+    // $('.js-note-tags-entry').html(tagsSelect);
 
     const editForm = $('.js-note-edit-form');
     editForm.find('.js-note-title-entry').val(store.currentNote.title);
     editForm.find('.js-note-content-entry').val(store.currentNote.content);
     editForm.find('.js-note-folder-entry').val(store.currentNote.folderId);
 
-    editForm.find('.js-note-tags-entry').val(() => {
-      if (store.currentNote.tags) {
-        return store.currentNote.tags.map(tag => tag.id);
-      }
-    });
+    // editForm.find('.js-note-tags-entry').val(() => {
+    //   if (store.currentNote.tags) {
+    //     return store.currentNote.tags.map(tag => tag.id);
+    //   }
+    // });
   }
 
   /**
@@ -116,12 +116,10 @@ const noteful = (function () {
       event.preventDefault();
 
       const noteId = getNoteIdFromElement(event.currentTarget);
-      console.log(noteId);
       api.details(`/api/notes/${noteId}`)
         .then((response) => {
           console.log(response);
           store.currentNote = response;
-          console.log(store.currentNote);
           render();
         });
     });

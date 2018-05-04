@@ -85,7 +85,7 @@ router.put('/:id', (req, res, next) => {
   const { id } = req.params;
   const {title, content, folderId} = req.body;
 
-  if(!mongoose.Types.ObjectId.isValid(id)){
+  if(folderId && !mongoose.Types.ObjectId.isValid(folderId)){
     const err = new Error('The id is not valid');
     err.status = 400;
     return next(err);
